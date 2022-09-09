@@ -3,15 +3,8 @@ import datetime
 import os
 import shutil
 import time
-
 import requests
 from bs4 import BeautifulSoup
-
-# 目标城市
-city = "wuzhong"
-
-# 数据存放目录
-base_dir = "{}_data".format(city)
 
 # 目标地址
 url = 'http://lishi.tianqi.com/{city}/{date}.html'
@@ -23,7 +16,8 @@ columns_name = ["日期", "最高气温", "最低气温", "天气", "风向"]
 
 
 # 获取所有历史数据
-def get_all_history_data(start_year):
+def get_all_history_data(start_year, city):
+    base_dir = "{}_data".format(city)
     remove_dir(base_dir)
     mkdir(base_dir)
     local_time = time.localtime(time.time())
@@ -37,10 +31,10 @@ def get_all_history_data(start_year):
             date = datetime.date(year, month, 1).strftime("%Y%m")
             target_url = url.format(city=city, date=date)
             # 获取数据
-            get_data(target_url, year, date)
+            get_data(base_dir, target_url, year, date)
 
 
-def get_data(url, year, date):
+def get_data(base_dir, url, year, date):
     folder = "{}/{}".format(base_dir, year)
     mkdir(folder)
     response = requests.get(url, headers=headers)
